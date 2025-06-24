@@ -15,33 +15,38 @@ public class EnemySpawner : MonoBehaviour
     private Coroutine _spawningCoroutine;
     private bool _isSpawning;
 
-    private void OnEnable() => Initialize();
+    private void OnEnable() => ValidateAndStart();
     private void OnDisable() => StopSpawning();
 
-    private void Initialize()
+    private void ValidateAndStart()
     {
         if (ValidateSpawnSettings())
+        {
             StartSpawning();
+        }
     }
 
     public void StartSpawning()
     {
-        if (_isSpawning)
-            return;
+        if (_isSpawning) return;
 
         _isSpawning = true;
-        _spawningCoroutine = StartCoroutine(SpawnProcess());
+        _spawningCoroutine = StartCoroutine(SpawnRoutine());
     }
 
     public void StopSpawning()
     {
         if (_isSpawning == false)
+        {
             return;
+        }
 
         _isSpawning = false;
 
         if (_spawningCoroutine != null)
+        {
             StopCoroutine(_spawningCoroutine);
+        }
     }
 
     private bool ValidateSpawnSettings()
@@ -70,21 +75,21 @@ public class EnemySpawner : MonoBehaviour
         return true;
     }
 
-    private IEnumerator SpawnProcess()
+    private IEnumerator SpawnRoutine()
     {
         var wait = new WaitForSeconds(_spawnInterval);
 
         while (_isSpawning)
         {
             yield return wait;
-            CreateEnemyAtRandomPoint();
+            SpawnEnemy();
         }
     }
 
-    private void CreateEnemyAtRandomPoint()
+    private void SpawnEnemy()
     {
         SpawnPoint point = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
         Enemy enemy = Instantiate(_enemyPrefab, point.transform.position, Quaternion.identity);
-        enemy.Setup(point.Target.transform, _enemySpeed);
+        enemy.Initialize(point.Target.transform, _enemySpeed);
     }
 }

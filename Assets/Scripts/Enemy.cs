@@ -13,23 +13,23 @@ public class Enemy : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-    private void FixedUpdate()
-    {
-        if (_rigidbody != null && _target != null)
-        {
-            Vector3 direction = (_target.position - transform.position).normalized;
-            _rigidbody.linearVelocity = direction * _speed;
-
-            if (direction != Vector3.zero)
-            {
-                transform.rotation = Quaternion.LookRotation(direction);
-            }
-        }
-    }
-
-    public void Setup(Transform target, float speed)
+    public void Initialize(Transform target, float speed)
     {
         _target = target;
         _speed = speed;
+    }
+
+    private void FixedUpdate()
+    {
+        if (_rigidbody == null || _target == null) 
+            return;
+
+        Vector3 direction = (_target.position - transform.position).normalized;
+        _rigidbody.linearVelocity = direction * _speed;
+
+        if (direction != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(direction);
+        }
     }
 }
